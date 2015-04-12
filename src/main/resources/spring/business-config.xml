@@ -26,68 +26,38 @@
 	<tx:annotation-driven />
 
 
-	<beans profile="jpa,spring-data-jpa">
-		<!-- JPA EntityManagerFactory -->
-		<bean id="entityManagerFactory"
-			class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-			p:dataSource-ref="dataSource">
-			<property name="jpaVendorAdapter">
-				<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
-					p:database="${jpa.database}" p:showSql="${jpa.showSql}" />
-			</property>
-			<!-- gDickens: BOTH Persistence Unit and Packages to Scan are NOT compatible, 
-				persistenceUnit will win -->
-			<property name="persistenceUnitName" value="petclinic" />
-			<property name="packagesToScan" value="org.springframework.samples.petclinic" />
-		</bean>
+	<!-- JPA EntityManagerFactory -->
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		p:dataSource-ref="dataSource">
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+				p:database="${jpa.database}" p:showSql="${jpa.showSql}" />
+		</property>
+		<!-- gDickens: BOTH Persistence Unit and Packages to Scan are NOT compatible, 
+			persistenceUnit will win -->
+		<property name="persistenceUnitName" value="petclinic" />
+		<property name="packagesToScan" value="org.springframework.samples.petclinic" />
+	</bean>
 
-		<!-- Transaction manager for a single JPA EntityManagerFactory (alternative 
-			to JTA) -->
-		<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
-			p:entityManagerFactory-ref="entityManagerFactory" />
+	<!-- Transaction manager for a single JPA EntityManagerFactory (alternative 
+		to JTA) -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+		p:entityManagerFactory-ref="entityManagerFactory" />
 
 
-		<!-- Post-processor to perform exception translation on @Repository classes 
-			(from native exceptions such as JPA PersistenceExceptions to Spring's DataAccessException 
-			hierarchy). -->
-		<bean
-			class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+	<!-- Post-processor to perform exception translation on @Repository classes 
+		(from native exceptions such as JPA PersistenceExceptions to Spring's DataAccessException 
+		hierarchy). -->
+	<bean
+		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 
-	</beans>
+	<jpa:repositories
+		base-package="org.springframework.samples.petclinic.repository.springdatajpa" />
 
-	<beans profile="jdbc">
-		<!-- Transaction manager for a single JDBC DataSource (alternative to JTA) -->
-		<bean id="transactionManager"
-			class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-			p:dataSource-ref="dataSource" />
+	<!-- Custom configuration for the custom implementation based on JPA -->
+	<!-- <bean id="owerRepository" -->
+	<!-- class="org.springframework.samples.petclinic.repository.springdatajpa.JpaOwnerRepositoryImpl" 
+		/> -->
 
-		<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-			<constructor-arg ref="dataSource" />
-		</bean>
-
-		<bean id="namedParameterJdbcTemplate"
-			class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
-			<constructor-arg ref="dataSource" />
-		</bean>
-
-		<context:component-scan
-			base-package="org.springframework.samples.petclinic.repository.jdbc" />
-	</beans>
-
-	<beans profile="jpa">
-		<!-- Will automatically be transactional due to @Transactional. EntityManager 
-			will be auto-injected due to @PersistenceContext. PersistenceExceptions will 
-			be auto-translated due to @Repository. -->
-		<context:component-scan
-			base-package="org.springframework.samples.petclinic.repository.jpa" />
-	</beans>
-
-	<beans profile="spring-data-jpa">
-		<jpa:repositories
-			base-package="org.springframework.samples.petclinic.repository.springdatajpa" />
-
-		<!-- Custom configuration for the custom implementation based on JPA -->
-<!-- 		<bean id="owerRepository" -->
-<!-- 			class="org.springframework.samples.petclinic.repository.springdatajpa.JpaOwnerRepositoryImpl" /> -->
-	</beans>
 </beans>

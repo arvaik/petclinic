@@ -72,7 +72,13 @@ public class ClinicServiceImpl implements ClinicService {
         return ownerRepository.findByLastName(lastName);
     }
 
-    @Override
+	@Override
+    @Transactional(readOnly = true)	
+	public Collection<Owner> findByFirstNameContaining(String firstName) throws DataAccessException {
+		return ownerRepository.findByFirstNameContaining(firstName);
+	}
+
+	@Override
     @Transactional
     public void saveOwner(Owner owner) throws DataAccessException {
         ownerRepository.save(owner);
@@ -104,6 +110,4 @@ public class ClinicServiceImpl implements ClinicService {
     public Collection<Vet> findVets() throws DataAccessException {
         return vetRepository.findAll();
     }
-
-
 }
