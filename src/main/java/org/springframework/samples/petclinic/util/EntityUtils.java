@@ -17,9 +17,11 @@
 package org.springframework.samples.petclinic.util;
 
 import java.util.Collection;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.samples.petclinic.model.BaseEntity;
+
 
 /**
  * Utility methods for handling entities. Separate from the BaseEntity class
@@ -32,6 +34,8 @@ import org.springframework.samples.petclinic.model.BaseEntity;
  * @since 29.10.2003
  */
 public abstract class EntityUtils {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(EntityUtils.class.getName()); 
 
 	/**
 	 * Look up the entity of the given class with the given id in the given
@@ -48,7 +52,9 @@ public abstract class EntityUtils {
 	 *             if the entity was not found
 	 */
 	public static <T extends BaseEntity> T getById(Collection<T> entities, Class<T> entityClass, int entityId) throws ObjectRetrievalFailureException {
+		LOGGER.debug("getById: ");
 		for (T entity : entities) {
+			LOGGER.debug("id: " + entity.getId().intValue());
 			if (entity.getId().intValue() == entityId && entityClass.isInstance(entity)) {
 				return entity;
 			}

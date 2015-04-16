@@ -49,4 +49,6 @@ public interface ClinicService {
     Collection<Owner> findOwnerByLastName(String lastName) throws DataAccessException;
     
     Collection<Owner> findByFirstNameContaining(String lastName) throws DataAccessException;
+    
+    public Collection<Owner> findOwners() throws DataAccessException;
 }

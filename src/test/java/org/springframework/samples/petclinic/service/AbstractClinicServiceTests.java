@@ -17,6 +17,8 @@ package org.springframework.samples.petclinic.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 import java.util.Collection;
 
@@ -158,6 +160,8 @@ public abstract class AbstractClinicServiceTests {
 	@Test
 	public void findVets() {
 	    Collection<Vet> vets = this.clinicService.findVets();
+	    
+	    assertThat(vets.size(), is(6));
 	
 	    Vet v1 = EntityUtils.getById(vets, Vet.class, 2);
 	    assertEquals("Leary", v1.getLastName());
