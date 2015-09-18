@@ -15,7 +15,7 @@
     </appender>
     
     <appender name="file" class="ch.qos.logback.core.FileAppender">
-		<file> C:\Dev\logs\log-%d{yyyy-MM-dd}.txt </file>
+		<file> C:\Dev\logs\log-petclinicangularjs-test.log </file>
 		<append>false</append>
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
@@ -25,6 +25,7 @@
     <logger name="org.springframework.samples.petclinic" level="debug"/>
     <logger name="org.springframework.test.web" level="trace"/>
     <logger name="org.hibernate.SQL" level="debug"/>
+    <logger name="org.hibernate.type" level="trace"/>
 
     <root level="debug">
         <appender-ref ref="console"/>

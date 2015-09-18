@@ -20,6 +20,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 /**
  * Simple JavaBean domain object with an id property. Used as a base class for objects needing this property.
  *
@@ -30,6 +32,7 @@ import javax.persistence.MappedSuperclass;
 public class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(Views.Summary.class)
     protected Integer id;
 
 
@@ -41,6 +44,7 @@ public class BaseEntity {
         return id;
     }
 
+    @JsonView(Views.Summary.class)
     public boolean isNew() {
         return (this.id == null);
     }

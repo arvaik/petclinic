@@ -17,9 +17,7 @@ package org.springframework.samples.petclinic.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,6 +25,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedAttributeNode;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -36,6 +36,10 @@ import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
+
 /**
  * Simple business object representing a pet.
  *
@@ -44,24 +48,30 @@ import org.springframework.format.annotation.DateTimeFormat;
  * @author Sam Brannen
  */
 @Entity
+@NamedEntityGraph(name = "Pet.detail", attributeNodes = @NamedAttributeNode("visits"))
 @Table(name = "pets")
 public class Pet extends NamedEntity {
 
     @Column(name = "birth_date")
+    @JsonView(Views.PetSummary.class)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     private DateTime birthDate;
 
     @ManyToOne
     @JoinColumn(name = "type_id")
+    @JsonView(Views.PetSummary.class)
     private PetType type;
-
+	
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "owner_id")
+    @JsonView(Views.PetSummary.class)
     private Owner owner;
 
+    @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pet", fetch = FetchType.EAGER)
-    private Set<Visit> visits;
+    private List<Visit> visits;
 
 
     public void setBirthDate(DateTime birthDate) {
@@ -88,18 +98,18 @@ public class Pet extends NamedEntity {
         return this.owner;
     }
 
-    protected void setVisitsInternal(Set<Visit> visits) {
+    protected void setVisitsInternal(List<Visit> visits) {
         this.visits = visits;
     }
 
-    protected Set<Visit> getVisitsInternal() {
+    protected List<Visit> getVisitsInternal() {
         if (this.visits == null) {
-            this.visits = new HashSet<Visit>();
+            this.visits = new ArrayList<Visit>();
         }
         return this.visits;
     }
 
-    public List<Visit> getVisits() {
+    public List<Visit> getMutableSortVisits() {
         List<Visit> sortedVisits = new ArrayList<Visit>(getVisitsInternal());
         PropertyComparator.sort(sortedVisits, new MutableSortDefinition("date", false, false));
         return Collections.unmodifiableList(sortedVisits);
@@ -110,4 +120,19 @@ public class Pet extends NamedEntity {
         visit.setPet(this);
     }
 
+	public List<Visit> getVisits() {
+		return visits;
+	}
+
+	public void setVisits(List<Visit> visits) {
+		this.visits = visits;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Pet [birthDate=").append(birthDate).append(", type=").append(type).append(", owner=").append(owner).append(", visits=").append(visits)
+				.append("]");
+		return builder.toString();
+	}
 }

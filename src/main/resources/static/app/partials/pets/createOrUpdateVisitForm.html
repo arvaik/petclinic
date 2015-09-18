@@ -1,0 +1,59 @@
+<h2>
+	<span ng-show="vm.visit.new">New </span>Visit
+</h2>
+
+<b>Pet</b>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Birth Date</th>
+            <th>Type</th>
+        </tr>
+    </thead>
+    <tr>
+        <td>{{vm.pet.name}}</td>
+        <td>{{vm.pet.birthDate}}</td>
+        <td>{{vm.pet.type.name}}</td>
+    </tr>
+</table>
+
+<form class="form-horizontal" id="visitForm" name="visitForm" ng-submit="vm.submitVisitForm(visitForm.$valid)" novalidate>
+    <span class="help-block" ng-show="vm.petFormError.message">{{vm.visitFormError.message}}</span>
+    <div class="control-group" ng-class="{ 'has-error' : visitForm.date.$invalid && !visitForm.date.$pristine }">
+        <label class="control-label">Date: </label><span>{{ vm.visit.date | date:'yyyy-MM-dd h:mm a' }}</span>
+        <div class="dropdown">
+            <input ui-date="dateOptions" name="date" ng-model="vm.visit.date">
+            <!--            <datetimepicker data-ng-model="vm.visit.date" data-datetimepicker-config="{ dropdownSelector: '#dropdown' }"></datetimepicker>-->
+            <span class="help-block" ng-show="visitForm.date.$invalid && !visitForm.date.$pristine">Your pet's birthDate is required.</span>
+            <span class="help-block" ng-show="visitForm.date.$error">{{error}}</span>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{ 'has-error' : visitForm.description.$invalid && !visitForm.description.$pristine }">
+        <label class="control-label">Description</label>
+        <div class="controls">
+            <input type="text" placeholder="Bodri" name="description" ng-model="vm.visit.description" required />
+            <span class="help-block" ng-show="visitForm.description.$invalid && !visitForm.description.$pristine">Your visit's description is required.</span>
+            <span class="help-block" ng-show="visitForm.description.$error">{{error}}</span>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button ng-show="vm.visit.new" type="submit" ng-disabled="visitForm.$invalid">Add Visit</button>
+        <button ng-hide="vm.visit.new" type="submit" ng-disabled="visitForm.$invalid">Update Visit</button>
+    </div>
+</form>
+
+<br />
+<b>Previous Visits</b>
+<table style="width: 333px;">
+    <tr>
+        <th>Date</th>
+        <th>Description</th>
+    </tr>
+    <tr ng-repeat="visit in vm.pet.visits">
+        <td>{{visit.date | date:'yyyy-MM-dd'}}</td>
+        <td>{{visit.description}}</td>
+    </tr>
+</table>

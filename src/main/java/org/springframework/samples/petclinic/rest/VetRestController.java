@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/rest")
+@RequestMapping("/vet")
 public class VetRestController {
 
 	@Autowired
 	private ClinicService clinicService;
 
-	@RequestMapping("/vets")
+	@RequestMapping("/xml")
 	public Vets showVetList(Model model) {
 		// Here we are returning an object of type 'Vets' rather than a
 		// collection of Vet objects
@@ -28,8 +28,8 @@ public class VetRestController {
 		return vets;
 	}
 
-	@RequestMapping(value = "/vetsjson", method = RequestMethod.GET)
-	public Collection<Vet> showJsonVetList(Model model) {
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public Collection<Vet> showJsonVetList() {
 		return this.clinicService.findVets();
 	}
 }

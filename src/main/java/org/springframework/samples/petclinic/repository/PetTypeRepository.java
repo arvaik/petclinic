@@ -15,24 +15,13 @@
  */
 package org.springframework.samples.petclinic.repository;
 
-import java.util.List;
-
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.samples.petclinic.model.Vet;
+import org.springframework.samples.petclinic.model.PetType;
 
 /**
- * Repository class for <code>Vet</code> domain objects All method names are compliant with Spring Data naming
+ * Repository class for <code>Pet</code> domain objects All method names are compliant with Spring Data naming
  * conventions so this interface can easily be extended for Spring Data See here: http://static.springsource.org/spring-data/jpa/docs/current/reference/html/jpa.repositories.html#jpa.query-methods.query-creation
  */
-public interface VetRepository extends CrudRepository<Vet, Integer> {
-
-    /**
-     * Retrieve all <code>Vet</code>s from the data store.
-     *
-     * @return a <code>Collection</code> of <code>Vet</code>s
-     */
-    List<Vet> findAll() throws DataAccessException;
-
+public interface PetTypeRepository extends CrudRepository<PetType, Integer> {
 
 }

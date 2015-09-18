@@ -1,0 +1,29 @@
+<h2>Owners</h2>
+
+<table id="owners_table" class="table table-striped">
+    <thead>
+        <tr>
+            <th style="width: 150px;">Name</th>
+            <th style="width: 200px;">Address</th>
+            <th>City</th>
+            <th>Telephone</th>
+            <th style="width: 100px;">Pets</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="owner in vm.owners">
+            <td><a ng-href="#/owners/{{owner.id}}">{{owner.firstName + owner.lastName}}</a>
+            </td>
+            <td>{{owner.address}}</td>
+            <td>{{owner.city}}</td>
+            <td>{{owner.telephone}}</td>
+            <td>
+                <ul>
+                    <li ng-repeat="pet in owner.pets">{{pet.name}}</li>
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br/>
+<a ng-href="#/owners/new" class="btn btn-info">Add Owner</a>

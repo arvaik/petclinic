@@ -1,0 +1,57 @@
+<h2>
+	<span ng-show="vm.owner.new">New </span> Owner
+</h2>
+<form class="form-horizontal" id="ownerForm" name="ownerForm" ng-submit="vm.submitOwnerForm(ownerForm.$valid)" novalidate>
+	<span class="help-block" ng-show="vm.ownerFormError.message">{{vm.ownerFormError.message}}</span>
+    <div class="control-group" ng-class="{ 'has-error' : ownerForm.firstName.$invalid && !ownerForm.firstName.$pristine }">
+        <label class="control-label">First Name</label>
+        <div class="controls">
+            <input type="text" placeholder="Bruce" name="firstName" ng-model="vm.owner.firstName" required />
+            <span class="help-block" ng-show="ownerForm.firstName.$invalid && !ownerForm.firstName.$pristine">Your firstName is required.</span>
+            <span class="help-block" ng-show="ownerForm.firstName.$error">{{error}}</span>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{ 'has-error' : ownerForm.lastName.$invalid && !ownerForm.lastName.$pristine }">
+        <label class="control-label">Last Name</label>
+        <div class="controls">
+            <input type="text" placeholder="Wayne" name="lastName" ng-model="vm.owner.lastName" required />
+            <span class="help-block" ng-show="ownerForm.lastName.$invalid && !ownerForm.lastName.$pristine">Your lastName is required.</span>
+            <span class="help-block" ng-show="ownerForm.lastName.$error">{{error}}</span>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{ 'has-error' : ownerForm.address.$invalid && !ownerForm.address.$pristine }">
+        <label class="control-label">Address</label>
+        <div class="controls">
+            <input type="text" placeholder="" name="address" ng-model="vm.owner.address" required />
+            <span class="help-block" ng-show="ownerForm.address.$invalid && !ownerForm.address.$pristine">Your address is required.</span>
+            <span class="help-block" ng-show="ownerForm.address.$error">{{error}}</span>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{ 'has-error' : ownerForm.city.$invalid && !ownerForm.city.$pristine }">
+        <label class="control-label">City</label>
+        <div class="controls">
+            <input type="text" placeholder="Budapest" name="city" ng-model="vm.owner.city" required />
+            <span class="help-block" ng-show="ownerForm.city.$invalid && !ownerForm.city.$pristine">Your city is required.</span>
+            <span class="help-block" ng-show="ownerForm.city.$error">{{error}}</span>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{ 'has-error' : ownerForm.telephone.$invalid && !ownerForm.telephone.$pristine }">
+        <label class="control-label">Telephone</label>
+        <div class="controls">
+            <input type="text" placeholder="3630123456" name="telephone" ng-model="vm.owner.telephone" ng-minlength="10" ng-maxlength="11" />
+            <span class="help-block" ng-show="ownerForm.telephone.$error.minlength">Telephone is too short.</span>
+            <span class="help-block" ng-show="ownerForm.telephone.$error.maxlength">Telephone is too long.</span>
+            <span class="help-block" ng-show="ownerForm.telephone.$error">{{error}}</span>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button ng-show="vm.owner.new" type="submit" ng-disabled="ownerForm.$invalid">Add Owner</button>
+        <button ng-hide="vm.owner.new" type="submit" ng-disabled="ownerForm.$invalid">Update Owner</button>
+    </div>
+    <p>form: {{ownerForm.$valid}}</p>
+</form>

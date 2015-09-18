@@ -26,6 +26,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Simple JavaBean domain object representing a visit.
  *
@@ -53,6 +56,7 @@ public class Visit extends BaseEntity {
     /**
      * Holds value of property pet.
      */
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "pet_id")
     private Pet pet;

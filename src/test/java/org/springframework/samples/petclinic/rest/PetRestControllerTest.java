@@ -16,7 +16,11 @@ import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.samples.petclinic.Application;
 import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Pet;
+import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.repository.OwnerRepository;
+import org.springframework.samples.petclinic.repository.PetRepository;
+import org.springframework.samples.petclinic.repository.PetTypeRepository;
 import org.springframework.samples.petclinic.util.EntityUtils;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -25,7 +29,9 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -33,8 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -44,18 +49,26 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
-public class OwnerRestControllerTest {
+public class PetRestControllerTest {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(OwnerRestControllerTest.class.getName()); 
+	private final static Logger LOGGER = LoggerFactory.getLogger(PetRestControllerTest.class.getName()); 
 
 	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
 	private MockMvc mockMvc;
 
 	private HttpMessageConverter mappingJackson2HttpMessageConverter;
+	
+	private ObjectMapper mapper;
 
 	@Autowired
+	private PetRepository petRepository;
+	
+	@Autowired
 	private OwnerRepository ownerRepository;
+	
+	@Autowired
+	private PetTypeRepository petTypeRepository;
 
 	@Autowired
 	private WebApplicationContext wac;
@@ -72,80 +85,44 @@ public class OwnerRestControllerTest {
 	@Before
 	public void setup() throws Exception {
 		this.mockMvc = webAppContextSetup(wac).build();
+		mapper = new ObjectMapper();
+		mapper.registerModule(new JodaModule());
 	}
-
+	
 	@Test
-	public void getOwnersTest() throws Exception {
-		mockMvc.perform(get("/owner/list"))
+	public void showPetTypesTest() throws Exception {
+		mockMvc.perform(get("/pet/types"))
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(contentType))
-		.andExpect(jsonPath("$", hasSize(11)));
+		.andExpect(jsonPath("$", hasSize(6)));
 	}
 
-	// owners VALUES (4, 'Harold', 'Davis', '563 Friendly St.', 'Windsor',
-	// '6085553198');
+	// pets INSERT INTO pets VALUES (4, 'Jewel', '2010-03-07', 2, 3);
 	@Test
-	public void getOwnerByIdTest() throws Exception {
-		mockMvc.perform(get("/owner/4"))
+	public void getPetByIdTest() throws Exception {
+		mockMvc.perform(get("/pet/4"))
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(contentType))
 		.andExpect(jsonPath("$.id", is(4)))
-		.andExpect(jsonPath("$.firstName", is("Harold")))
-		.andExpect(jsonPath("$.lastName", is("Davis")))
-		.andExpect(jsonPath("$.city", is("Windsor")))
-		.andExpect(jsonPath("$.address", is("563 Friendly St.")))
-		.andExpect(jsonPath("$.telephone", is("6085553198")));
+		.andExpect(jsonPath("$.name", is("Jewel")))
+		.andExpect(jsonPath("$.birthDate", is("2010-03-07T00:00:00.000Z")))
+		.andExpect(jsonPath("$.type.name", is("dog")))
+		.andExpect(jsonPath("$.visits", hasSize(0)));
 	}
 
-	//6, 'Jean', 'Coleman', '105 N. Lake St.', 'Monona', '6085552654');
 	@Test
-	public void getOwnerById6Test() throws Exception {
-		mockMvc.perform(get("/owner/6"))
-		.andExpect(status().isOk())
-		.andExpect(content().contentType(contentType))
-		.andExpect(jsonPath("$.id", is(6)))
-		.andExpect(jsonPath("$.firstName", is("Jean")))
-		.andExpect(jsonPath("$.lastName", is("Coleman")))
-		.andExpect(jsonPath("$.city", is("Monona")))
-		.andExpect(jsonPath("$.address", is("105 N. Lake St.")))
-		.andExpect(jsonPath("$.telephone", is("6085552654")));
-		//.andExpect(jsonPath("$"));
-	}
-	
-	@Test
-	public void createOwnerTest() throws Exception {
-		Owner owner = new Owner();
-		owner.setFirstName("Károly");
-		owner.setLastName("Árvai");
-		owner.setCity("Budapest");
-		owner.setAddress("1118, Budapest Csiki-hegyek utca");
-		owner.setTelephone("36309306554");
-
-		//String ownerJson = json(owner);
+	public void createPetTest() throws Exception {
 		
-		JSONObject ownerJson = new JSONObject();
-		ownerJson.put("firstName", "Károly");
-		ownerJson.put("lastName", "Árvai");
-		ownerJson.put("address", "1118, Budapest Csiki-hegyek utca");
-		ownerJson.put("city", "Budapest");
-		ownerJson.put("telephone", "3639306554");
-
-		LOGGER.debug("testOwnerJson: " + ownerJson);
-		this.mockMvc.perform(put("/owner/save").contentType(contentType).content(ownerJson.toJSONString()))
-		.andExpect(status().isOk())
-		.andExpect(content().contentType(contentType))
-		//.andExpect(jsonPath("$.id", anyOf()))
-		.andExpect(jsonPath("$.firstName", is("Károly")))
-		.andExpect(jsonPath("$.lastName", is("Árvai")))
-		.andExpect(jsonPath("$.city", is("Budapest")))
-		.andExpect(jsonPath("$.address", is("1118, Budapest Csiki-hegyek utca")))
-		.andExpect(jsonPath("$.telephone", is("3639306554")));
-	}
-	
-	@Test
-	public void saveOwnerTest() throws Exception {
-		Owner owner = ownerRepository.findOne(5);
-		owner.setTelephone("3639306554");
+		PetType petType = petTypeRepository.findOne(2);
+		Owner owner = ownerRepository.findOne(2);
+		//Pet pet = new Pet()
+		
+		
+		
+		
+		JSONObject petTypeJson = new JSONObject();
+		petTypeJson.put("id", petType.getId());
+		petTypeJson.put("name", petType.getName());
 		
 		JSONObject ownerJson = new JSONObject();
 		ownerJson.put("id", owner.getId());
@@ -154,18 +131,62 @@ public class OwnerRestControllerTest {
 		ownerJson.put("address", owner.getAddress());
 		ownerJson.put("city", owner.getCity());
 		ownerJson.put("telephone", owner.getTelephone());
+		
+		JSONObject petJson = new JSONObject();
+		petJson.put("name", "Salvadore");
+		petJson.put("birthDate", "2010-12-28T00:00:00.000Z");
+		petJson.put("type", petTypeJson);
+		petJson.put("owner", ownerJson);
 
-		//String ownerJson = json(owner); 'Peter', 'McTavish', '2387 S. Fair Way', 'Madison', '6085552765');
-		LOGGER.debug("ownerJson: " + ownerJson);
-		this.mockMvc.perform(put("/owner/save").contentType(contentType).content(ownerJson.toJSONString()))
+		LOGGER.debug("testPetJson: " + petJson);
+		this.mockMvc.perform(put("/pet/save").contentType(contentType).content(petJson.toJSONString()))
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(contentType))
-		.andExpect(jsonPath("$.id", is(5)))
-		.andExpect(jsonPath("$.firstName", is("Peter")))
-		.andExpect(jsonPath("$.lastName", is("McTavish")))
-		.andExpect(jsonPath("$.city", is("Madison")))
-		.andExpect(jsonPath("$.address", is("2387 S. Fair Way")))
-		.andExpect(jsonPath("$.telephone", is("3639306554")));
+		.andExpect(jsonPath("$.id", any(Integer.class)))
+		.andExpect(jsonPath("$.name", is("Salvadore")))
+		.andExpect(jsonPath("$.birthDate", is("2010-12-28T00:00:00.000Z")))
+		.andExpect(jsonPath("$.type.name", is("dog")));
+	}
+	
+	@Test
+	public void savePetTest() throws Exception {
+		Pet pet = petRepository.findOne(5);
+		pet.setName("Test2");
+		
+		String json = mapper.writeValueAsString(pet);
+		LOGGER.debug("petJson mapper: " + json);
+		
+		JSONObject petTypeJson = new JSONObject();
+		petTypeJson.put("id", pet.getType().getId());
+		petTypeJson.put("name", pet.getType().getName());
+		petTypeJson.put("new", Boolean.FALSE);
+		
+		JSONObject ownerJson = new JSONObject();
+		ownerJson.put("id", pet.getOwner().getId());
+		ownerJson.put("firstName", pet.getOwner().getFirstName());
+		ownerJson.put("lastName", pet.getOwner().getLastName());
+		ownerJson.put("address", pet.getOwner().getAddress());
+		ownerJson.put("city", pet.getOwner().getCity());
+		ownerJson.put("telephone", pet.getOwner().getTelephone());
+		ownerJson.put("new", Boolean.FALSE);
+		
+		JSONObject petJson = new JSONObject();
+		petJson.put("id", pet.getId());
+		petJson.put("name", pet.getName());
+		//petJson.put("birthDate", pet.getBirthDate());
+		petJson.put("type", petTypeJson);
+		petJson.put("owner", ownerJson);
+		petJson.put("new", Boolean.FALSE);
+
+		//String 'Iggy', '2010-11-30', 3, 4); (3, 'lizard');
+		LOGGER.debug("petJson: " + petJson);
+		this.mockMvc.perform(put("/pet/save").contentType(contentType).content(petJson.toJSONString()))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(contentType))
+		.andExpect(jsonPath("$.id", any(Integer.class)))
+		.andExpect(jsonPath("$.name", is("Test2")))
+		//.andExpect(jsonPath("$.birthDate", is("2010-11-30T00:00:00.000Z")))
+		.andExpect(jsonPath("$.type.name", is("lizard")));
 	}
 
 	@SuppressWarnings("unchecked")

@@ -34,6 +34,9 @@ import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.core.style.ToStringCreator;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
+
 /**
  * Simple JavaBean domain object representing an owner.
  *
@@ -45,21 +48,26 @@ import org.springframework.core.style.ToStringCreator;
 @Entity
 @Table(name = "owners")
 public class Owner extends Person {
-    @Column(name = "address")
+    
+	@Column(name = "address")
     @NotEmpty
+    @JsonView(Views.OwnerSummary.class)
     private String address;
 
     @Column(name = "city")
     @NotEmpty
+    @JsonView(Views.OwnerSummary.class)
     private String city;
 
-    @Column(name = "telephone")
+	@Column(name = "telephone")
     @NotEmpty
     @Digits(fraction = 0, integer = 10)
+	@JsonView(Views.OwnerSummary.class)
     private String telephone;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", fetch = FetchType.EAGER)
-    private Set<Pet> pets;
+	@JsonManagedReference
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", fetch = FetchType.EAGER)
+    private List<Pet> pets;
 
 
     public String getAddress() {
@@ -86,18 +94,18 @@ public class Owner extends Person {
         this.telephone = telephone;
     }
 
-    protected void setPetsInternal(Set<Pet> pets) {
+    protected void setPetsInternal(List<Pet> pets) {
         this.pets = pets;
     }
 
-    protected Set<Pet> getPetsInternal() {
+    protected List<Pet> getPetsInternal() {
         if (this.pets == null) {
-            this.pets = new HashSet<Pet>();
+            this.pets = new ArrayList<Pet>();
         }
         return this.pets;
     }
 
-    public List<Pet> getPets() {
+    public List<Pet> getMutableSortPets() {
         List<Pet> sortedPets = new ArrayList<Pet>(getPetsInternal());
         PropertyComparator.sort(sortedPets, new MutableSortDefinition("name", true, true));
         return Collections.unmodifiableList(sortedPets);
@@ -137,6 +145,14 @@ public class Owner extends Person {
         }
         return null;
     }
+
+    public List<Pet> getPets() {
+		return pets;
+	}
+
+	public void setPets(List<Pet> pets) {
+		this.pets = pets;
+	}
 
     @Override
     public String toString() {

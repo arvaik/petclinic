@@ -1,0 +1,66 @@
+<h2>Owner Information</h2>
+
+<table class="table table-striped" style="width: 600px;">
+    <tr>
+        <th>Name</th>
+        <td><b>{{vm.owner.firstName + " " + vm.owner.lastName}}</b>
+        </td>
+    </tr>
+    <tr>
+        <th>Address</th>
+        <td>{{vm.owner.address}}</td>
+    </tr>
+    <tr>
+        <th>City</th>
+        <td>{{vm.owner.city}}</td>
+    </tr>
+    <tr>
+        <th>Telephone</th>
+        <td>{{vm.owner.telephone}}</td>
+    </tr>
+    <tr>
+        <td><a ng-href="#/owners/{{vm.owner.id}}/edit" class="btn btn-info">Edit Owner</a>
+        </td>
+        <td><a ng-href="#/owners/{{vm.owner.id}}/pets/new" class="btn btn-success">Add New Pet</a>
+        </td>
+    </tr>
+</table>
+
+<h2>Pets and Visits</h2>
+
+<table class="table" style="width: 600px;" ng-repeat="pet in vm.owner.pets">
+    <tr>
+        <td valign="top" style="width: 300px;">
+            <dl class="dl-horizontal">
+                <dt>Name</dt>
+                <dd>{{pet.name}}</dd>
+                <dt>Birth Date</dt>
+                <dd>{{pet.birthDate | date:'yyyy-MM-dd'}}</dd>
+                <dt>Type</dt>
+                <dd>{{pet.type.name}}</dd>
+            </dl>
+        </td>
+        <td valign="top">
+            <table class="table-condensed">
+                <thead>
+                    <tr>
+                        <th>Visit Date</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="visit in pet.visits">
+                        <td>{{visit.date | date:'yyyy-MM-dd'}}</td>
+                        <td>{{visit.description}}</td>
+                    </tr>
+                    <tr>
+                        <td><a ng-href="#/owners/{{vm.owner.id}}/pets/{{pet.id}}/edit">Edit Pet</a>
+                        </td>
+                        <td><a ng-href="#/owners/{{vm.owner.id}}/pets/{{pet.id}}/visits/new">Add Visit</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+</table>

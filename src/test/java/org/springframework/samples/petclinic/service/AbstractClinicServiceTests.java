@@ -73,8 +73,12 @@ public abstract class AbstractClinicServiceTests {
         assertTrue(owner1.getLastName().startsWith("Franklin"));
         Owner owner10 = this.clinicService.findOwnerById(10);
         assertEquals("Carlos", owner10.getFirstName());
+    }
 
-        //assertEquals(owner1.getPets().size(), 1);
+    @Test
+    public void findSingleOwner6() {
+        Owner owner6 = this.clinicService.findOwnerById(6);
+        assertEquals(2, owner6.getPets().size());
     }
 
     @Test

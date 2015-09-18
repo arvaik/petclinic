@@ -15,8 +15,7 @@
  */
 package org.springframework.samples.petclinic.service;
 
-import java.util.Collection;
-
+import java.util.List;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.Pet;
@@ -32,23 +31,33 @@ import org.springframework.samples.petclinic.model.Visit;
  */
 public interface ClinicService {
 
-    public Collection<PetType> findPetTypes() throws DataAccessException;
+    public List<PetType> findPetTypes() throws DataAccessException;
 
     public Owner findOwnerById(int id) throws DataAccessException;
-
+    
     public Pet findPetById(int id) throws DataAccessException;
 
-    public void savePet(Pet pet) throws DataAccessException;
-
-    public void saveVisit(Visit visit) throws DataAccessException;
-
-    public Collection<Vet> findVets() throws DataAccessException;
-
-    public void saveOwner(Owner owner) throws DataAccessException;
-
-    Collection<Owner> findOwnerByLastName(String lastName) throws DataAccessException;
+    public Pet savePet(Pet pet) throws DataAccessException;
     
-    Collection<Owner> findByFirstNameContaining(String lastName) throws DataAccessException;
+    public void removePet(int id) throws DataAccessException;
     
-    public Collection<Owner> findOwners() throws DataAccessException;
+    public Visit findVisitById(int id) throws DataAccessException;
+    
+    public Visit saveVisit(Visit visit) throws DataAccessException;
+    
+    public void removeVisit(int id) throws DataAccessException;
+
+    public List<Vet> findVets() throws DataAccessException;
+
+    public Owner saveOwner(Owner owner) throws DataAccessException;
+    
+    public void removeOwner(int id) throws DataAccessException;
+
+    List<Owner> findOwnerByLastName(String lastName) throws DataAccessException;
+    
+    List<Owner> findByFirstNameContaining(String lastName) throws DataAccessException;
+    
+    public List<Owner> findOwners() throws DataAccessException;
+
+	PetType findPetTypeById(int id) throws DataAccessException;
 }

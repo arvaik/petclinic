@@ -1,0 +1,46 @@
+<h2>
+	<span ng-show="vm.pet.new">New </span>Pet
+</h2>
+
+<form class="form-horizontal" id="petForm" name="petForm" ng-submit="vm.submitPetForm(petForm.$valid)" novalidate>
+    <span class="help-block" ng-show="vm.petFormError.message">{{vm.petFormError.message}}</span>
+    <div class="control-group" id="owner">
+        <label class="control-label">Owner </label>
+        <span>{{firstName + lastName}}</span>
+    </div>
+
+    <div class="control-group" ng-class="{ 'has-error' : petForm.name.$invalid && !petForm.name.$pristine }">
+        <label class="control-label">Name</label>
+        <div class="controls">
+            <input type="text" placeholder="Bodri" name="name" ng-model="vm.pet.name" required />
+            <span class="help-block" ng-show="petForm.name.$invalid && !petForm.name.$pristine">Your pet's name is required.</span>
+            <span class="help-block" ng-show="petForm.name.$error">{{error}}</span>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{ 'has-error' : petForm.birthDate.$invalid && !petForm.birthDate.$pristine }">
+        <label class="control-label">Birth Date: </label><span>{{ vm.pet.birthDate | date:'yyyy-MM-dd h:mm a' }}</span>
+        <!--         <datetimepicker data-ng-model="vm.pet.birthDate" data-datetimepicker-config="{ startView:'day', minView:'day' }" />  | date:'yyyy-MM-dd a' -->
+        <div class="dropdown">
+            <input ui-date="dateOptions" name="birthDate" ng-model="vm.pet.birthDate">
+            <!--            <datetimepicker data-ng-model="vm.pet.birthDate"></datetimepicker>-->
+            <span class="help-block" ng-show="petForm.birthDate.$invalid && !petForm.birthDate.$pristine">Your pet's birthDate is required.</span>
+            <span class="help-block" ng-show="petForm.birthDate.$error">{{error}}</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Type </label>
+        <select name="type" ng-options="type.name for type in vm.petTypes track by type.id" ng-model="vm.pet.type" required>
+            <!--             <option value="">-- choose type --</option> -->
+        </select>
+        <span class="help-block" ng-show="petForm.type.$invalid && !petForm.type.$pristine">Your pet's type is required.</span>
+    </div>
+
+    <div>{{vm.pet}}</div>
+
+    <div class="form-actions">
+        <button ng-show="vm.pet.new" type="submit" ng-disabled="petForm.$invalid">Add Pet</button>
+        <button ng-hide="vm.pet.new" type="submit" ng-disabled="petForm.$invalid">Update Pet</button>
+    </div>
+</form>

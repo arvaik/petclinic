@@ -18,6 +18,8 @@ package org.springframework.samples.petclinic.model;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 
 /**
  * Simple JavaBean domain object adds a name property to <code>BaseEntity</code>. Used as a base class for objects
@@ -30,6 +32,7 @@ import javax.persistence.MappedSuperclass;
 public class NamedEntity extends BaseEntity {
 
     @Column(name = "name")
+    @JsonView(Views.Summary.class)
     private String name;
 
 

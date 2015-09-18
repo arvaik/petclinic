@@ -19,8 +19,12 @@ import java.util.Collection;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Pet;
+import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.Views;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,66 +36,57 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @RestController
-@RequestMapping("/owner")
-public class OwnerRestController {
+@RequestMapping("/pet")
+public class PetRestController {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(PetRestController.class.getName());
 
-    private final ClinicService clinicService;
+	private final ClinicService clinicService;
 
 
     @Autowired
-    public OwnerRestController(ClinicService clinicService) {
+    public PetRestController(ClinicService clinicService) {
         this.clinicService = clinicService;
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public Collection<Owner> showOwners() {
-        return this.clinicService.findOwners();
+    @RequestMapping(value = "/types", method = RequestMethod.GET)
+    public Collection<PetType> showPetTypes() {
+        return this.clinicService.findPetTypes();
     }
 
     /**
-     * Custom handler for displaying an owner.
+     * Custom handler for displaying an pet.
      *
-     * @param ownerId the ID of the owner to display
+     * @param petId the ID of the pet to display
      * @return 
      * @return a ModelMap with the model attributes for the view
      */
-    @RequestMapping(value = "/{ownerId}", method = RequestMethod.GET)
-    public Owner showOwner(@PathVariable("ownerId") int ownerId) {
-        return this.clinicService.findOwnerById(ownerId);
+    @JsonView(Views.PetSummary.class)
+    @RequestMapping(value = "/{petId}", method = RequestMethod.GET)
+    public Pet showPet(@PathVariable("petId") int petId) {
+        return this.clinicService.findPetById(petId);
     }
 
     /**
-     * Custom handler for remove an owner.
+     * Custom handler for remove an pet.
      *
-     * @param ownerId the ID of the owner to remove
+     * @param petId the ID of the pet to remove
      */
-    @RequestMapping(value = "/{ownerId}", method = RequestMethod.DELETE)
-    public void removeOwner(@PathVariable("ownerId") int ownerId) {
-        this.clinicService.removeOwner(ownerId);
+    @RequestMapping(value = "/{petId}", method = RequestMethod.DELETE)
+    public void removePet(@PathVariable("petId") int petId) {
+        this.clinicService.removePet(petId);
     }
     
     /**
-     * Custom handler for save an owner.
+     * Custom handler for save an pet.
      *
-     * @param Owner
+     * @param Pet
      * @return 
      * @return a ModelMap with the model attributes for the view
      */
     @RequestMapping(value = "/save", method = RequestMethod.PUT)
-    public Owner saveOwner(@Valid @RequestBody Owner owner) {
-        return this.clinicService.saveOwner(owner);
-    }
-
-    /**
-     * Custom handler for get an empty owner.
-     *
-     * @param Owner
-     * @return 
-     * @return a ModelMap with the model attributes for the view
-     */
-    @JsonView(Views.OwnerSummary.class)
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public Owner getEmptyOwner() {
-        return new Owner();
+    public Pet savePet(@Valid @RequestBody Pet pet) {
+    	LOGGER.debug("pet: ", pet.toString());
+        return this.clinicService.savePet(pet);
     }
 }

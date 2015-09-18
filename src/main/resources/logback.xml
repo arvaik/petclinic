@@ -5,4 +5,5 @@
     <logger name="org.springframework.web" level="debug"/>
     <logger name="org.springframework.samples.petclinic" level="debug"/>
     <logger name="org.hibernate.SQL" level="debug"/>
+    <logger name="com.fasterxml.jackson" level="debug"/>
 </configuration>

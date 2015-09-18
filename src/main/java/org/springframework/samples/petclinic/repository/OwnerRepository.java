@@ -30,9 +30,10 @@
  */
 package org.springframework.samples.petclinic.repository;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.model.Owner;
 
@@ -50,7 +51,7 @@ public interface OwnerRepository extends CrudRepository<Owner, Integer> {
      * @return a <code>Collection</code> of matching <code>Owner</code>s (or an empty <code>Collection</code> if none
      *         found)
      */
-    Collection<Owner> findByLastName(String lastName) throws DataAccessException;
+    List<Owner> findByLastName(String lastName) throws DataAccessException;
     
     /**
      * Retrieve <code>Owner</code>s from the data store by last name, returning all owners whose last name <i>containing</i>
@@ -60,5 +61,7 @@ public interface OwnerRepository extends CrudRepository<Owner, Integer> {
      * @return a <code>Collection</code> of matching <code>Owner</code>s (or an empty <code>Collection</code> if none
      *         found)
      */
-    Collection<Owner> findByFirstNameContaining(String firstName) throws DataAccessException;    
+    List<Owner> findByFirstNameContaining(String firstName) throws DataAccessException;
+    
+    Owner findById(Integer id) throws DataAccessException;
 }

@@ -20,6 +20,8 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 /**
  * Simple JavaBean domain object representing an person.
  *
@@ -30,10 +32,12 @@ public class Person extends BaseEntity {
 
     @Column(name = "first_name")
     @NotEmpty
+    @JsonView(Views.Summary.class)
     protected String firstName;
 
     @Column(name = "last_name")
     @NotEmpty
+    @JsonView(Views.Summary.class)
     protected String lastName;
 
     public String getFirstName() {
